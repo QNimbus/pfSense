@@ -5,6 +5,7 @@
 	 * +====================================================+
 	 *  Services Supported:
 	 *    - DynDns (dyndns.org) [dynamic, static, custom]
+	 *    - Joker (joker.com)
 	 *    - DHSDns (dhs.org)
 	 *    - No-IP (no-ip.com)
 	 *    - EasyDNS (easydns.com)
@@ -37,6 +38,7 @@
 	 *  DynDNS Dynamic - Last Tested: 12 July 2005
 	 *  DynDNS Static  - Last Tested: NEVER
 	 *  DynDNS Custom  - Last Tested: NEVER
+	 *  Joker          - Last Tested: NEVER
 	 *  No-IP          - Last Tested: 20 July 2008
 	 *  HN.org         - Last Tested: 12 July 2005
 	 *  EasyDNS        - Last Tested: 20 July 2008
@@ -58,8 +60,7 @@
 	 * @version 	0.8
 	 * @updated	13 October 05 at 21:02:42 GMT
 	 *
-	 * DNSexit/OpenDNS support and multiwan extension for pfSense by Ermal Luçi
-	 *
+	 * DNSexit/OpenDNS support and multiwan extension for pfSense by Ermal Luç©Š	 *
 	 */
 
 	class updatedns {
@@ -144,6 +145,7 @@
 				case 'dyndns':
 				case 'dyndns-static':
 				case 'dyndns-custom':
+				case 'joker':
 				case 'dhs':
 				case 'noip':
 				case 'easydns':
@@ -203,6 +205,19 @@
 						$port = ":" . $this->_dnsPort;
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
+				case 'joker':
+					$needsIP = FALSE;
+					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") $this->_dnsWildcard = "ON";
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					$server = "https://svc.joker.com/nic/update";
+					$port = "";
+					if($this->_dnsServer)
+						$server = $this->_dnsServer;
+					if($this->_dnsPort)
+						$port = ":" . $this->_dnsPort;
+					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
+					break;					
 				case 'dhs':
 					$needsIP = TRUE;
 					$post_data['hostscmd'] = 'edit';
@@ -496,6 +511,23 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'joker':
+					if (preg_match('/notfqdn/i', $data)) {
+						$status = "phpDynDNS: (Error) Not A FQDN!";
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = "phpDynDNS: (Success) No Change In IP Address";
+						$successful_update = true;
+					} else if (preg_match('/good/i', $data)) {
+						$status = "phpDynDNS: (Success) IP Address Changed Successfully!";
+						$successful_update = true;
+					} else if (preg_match('/noauth/i', $data)) {
+						$status = "phpDynDNS: (Error) User Authorization Failed";
+					} else {
+						$status = "phpDynDNS: (Unknown Response)";
+						log_error("phpDynDNS: PAYLOAD: {$data}");
+						$this->_debug($data);
+					}
+					break;    					
 				case 'dhs':
 					break;
 				case 'noip':

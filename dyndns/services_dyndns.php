@@ -1,8 +1,7 @@
 <?php
 /* $Id$ */
 /*
-	Copyright (C) 2008 Ermal Luçi
-	All rights reserved.
+	Copyright (C) 2008 Ermal Luç©Š	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -114,8 +113,8 @@ include("head.inc");
 		  </td>
                   <td class="listlr">
 				  <?php
-					$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net");
-					$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net");
+					$types = explode(",", "DNS-O-Matic, DynDNS (dynamic),DynDNS (static),DynDNS (custom),Joker,DHS,DyNS,easyDNS,No-IP,ODS.org,ZoneEdit,Loopia,freeDNS, DNSexit, OpenDNS, Namecheap, HE.net");
+					$vals = explode(" ", "dnsomatic dyndns dyndns-static dyndns-custom joker dhs dyns easydns noip ods zoneedit loopia freedns dnsexit opendns namecheap he-net");
 					$j = 0; for ($j = 0; $j < count($vals); $j++) 
                       			if ($vals[$j] == $dyndns['type']) { 
                       				echo htmlspecialchars($types[$j]);
