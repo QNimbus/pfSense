@@ -1,0 +1,3 @@
+/etc/inc/dyndns.class
+/usr/local/www/services_dyndns.php
+/usr/local/www/services_dyndns_edit.php
